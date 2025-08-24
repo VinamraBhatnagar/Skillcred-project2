@@ -16,9 +16,18 @@ const EmailPreview: React.FC<Props> = ({ emails }) => {
 
   const activeEmail = emails[activeTab];
 
-  // ✅ Decode body + replace dynamicDiscountCode
-  const decodedBody = decodeURIComponent(activeEmail.body || "")
-    .replace(/\{dynamicDiscountCode\}/g, activeEmail.dynamicDiscountCode || "");
+  // ✅ Try decoding safely
+  let decodedBody = activeEmail.body || "";
+  try {
+    decodedBody = decodeURIComponent(decodedBody);
+  } catch (e) {
+    // if not URI encoded, keep as-is
+  }
+
+  // ✅ Replace placeholders + line breaks
+  decodedBody = decodedBody
+    .replace(/\{dynamicDiscountCode\}/g, activeEmail.dynamicDiscountCode || "")
+    .replace(/%0A/gi, "<br/>"); // convert line breaks
 
   return (
     <div className="flex flex-col h-full">
