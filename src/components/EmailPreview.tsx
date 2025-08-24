@@ -16,6 +16,10 @@ const EmailPreview: React.FC<Props> = ({ emails }) => {
 
   const activeEmail = emails[activeTab];
 
+  // ✅ Decode body + replace dynamicDiscountCode
+  const decodedBody = decodeURIComponent(activeEmail.body || "")
+    .replace(/\{dynamicDiscountCode\}/g, activeEmail.dynamicDiscountCode || "");
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-shrink-0 border-b border-gray-700 flex justify-between items-center px-2">
@@ -74,7 +78,7 @@ const EmailPreview: React.FC<Props> = ({ emails }) => {
           </div>
           <div
             className="p-4 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: activeEmail.body }}
+            dangerouslySetInnerHTML={{ __html: decodedBody }}
           />
         </div>
       </div>
